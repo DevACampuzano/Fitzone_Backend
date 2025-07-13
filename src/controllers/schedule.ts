@@ -185,4 +185,73 @@ export class ScheduleController {
       throw new Error("Error fetching user stats");
     }
   }
+
+  async getScheduleById(id: number) {
+    try {
+      const schedule = (await this.scheduleModel
+        .findOne({
+          where: { id, status: true },
+          include: [
+            {
+              model: this.classModel,
+              as: "class",
+              where: { status: true },
+            },
+          ],
+        })
+        .then((schedule) =>
+          schedule?.toJSON()
+        )) as IScheduleWithRelations | null;
+
+      if (!schedule) {
+        return {
+          code: 404,
+          response: {
+            status: false,
+            message: "Schedule not found",
+          },
+        };
+      }
+
+      const spots = await this.userScheduleModel.count({
+        where: { id_schedule: schedule.id },
+      });
+      const dateStart = new Date(schedule.startTime);
+      const data = {
+        id: schedule.id,
+        name: schedule.class!.name,
+        description: schedule.class!.description,
+        time: dateStart.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        date: dateStart.toLocaleDateString("es-ES", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        }),
+        duration: schedule.class!.duration,
+        difficulty: schedule.class!.difficulty,
+        spots,
+        maxSpots: schedule.class!.capacity,
+        price: schedule.class!.price,
+        image: schedule.class!.photo,
+        location: schedule.class!.location,
+        equipment: JSON.parse(schedule.class!.equipment),
+        benefits: JSON.parse(schedule.class!.benefits),
+        requirements: JSON.parse(schedule.class!.requirements),
+      };
+
+      return {
+        code: 200,
+        response: {
+          status: true,
+          data,
+        },
+      };
+    } catch (error) {
+      console.error("Error fetching schedule:", error);
+      throw new Error("Error fetching schedule");
+    }
+  }
 }

@@ -37,4 +37,44 @@ router.get("/", [validateJWT], async (req: Request, res: Response) => {
   }
 });
 
+router.get(
+  "/get-my-schedules",
+  [validateJWT],
+  async (req: Request, res: Response) => {
+    try {
+      const userId = req["decoded"].id;
+      const { code, response } = await scheduleController.getMySchedule(userId);
+      res.status(code).json(response);
+    } catch (error) {
+      console.error("Error fetching user schedules:", error);
+      res.status(500).json({
+        status: false,
+        message: "Error fetching user schedules",
+        error: error instanceof Error ? error.message : "Unknown error",
+        code: ScheduleErrorCodes.Error_2,
+      });
+    }
+  }
+);
+
+router.get(
+  "/get-my-stats",
+  [validateJWT],
+  async (req: Request, res: Response) => {
+    try {
+      const userId = req["decoded"].id;
+      const { code, response } = await scheduleController.getMyStats(userId);
+      res.status(code).json(response);
+    } catch (error) {
+      console.error("Error fetching user stats:", error);
+      res.status(500).json({
+        status: false,
+        message: "Error fetching user stats",
+        error: error instanceof Error ? error.message : "Unknown error",
+        code: ScheduleErrorCodes.Error_2,
+      });
+    }
+  }
+);
+
 export default router;

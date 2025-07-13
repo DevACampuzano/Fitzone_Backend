@@ -30,14 +30,19 @@ export default (sequelize: Sequelize) => {
         type: DataTypes.ENUM("Principiante", "Intermedio", "Avanzado"),
         allowNull: true,
       },
-      id_category: {
-        type: DataTypes.BIGINT,
-        allowNull: false,
-      },
       photo: {
         type: DataTypes.STRING(500),
         allowNull: true,
       },
+      location: {
+        type: DataTypes.STRING(500),
+        allowNull: true,
+      },
+      id_category: {
+        type: DataTypes.BIGINT,
+        allowNull: false,
+      },
+
       status: {
         type: DataTypes.TINYINT,
         defaultValue: 1,

@@ -6,12 +6,17 @@ enum IClassDifficulty {
 
 interface IClass {
   id: number;
+  name: string;
+  description: string;
   duration: number;
   capacity: number;
   price: number;
   difficulty: IClassDifficulty;
-  name: string;
-  photo?: string;
+  photo: string;
+  location: string;
+  equipment: string;
+  benefits: string;
+  requirements: string;
   id_category: number;
   status: number;
 }

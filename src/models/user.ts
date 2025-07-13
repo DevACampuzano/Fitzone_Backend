@@ -1,7 +1,7 @@
 import { DataTypes, type Sequelize } from "sequelize";
 import type { ModelSeq } from "../common/interface/db";
 export default (sequelize: Sequelize) => {
-  const Users: ModelSeq = sequelize.define<UserModel>(
+  const Users: ModelSeq<UserModel> = sequelize.define<UserModel>(
     "Users",
     {
       id: {

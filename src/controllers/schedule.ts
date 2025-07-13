@@ -3,16 +3,16 @@ import type { ModelSeq } from "../common/interface/db";
 import db from "../models";
 
 export class ScheduleController {
-  private scheduleModel: ModelSeq;
-  private userScheduleModel: ModelSeq;
-  private usersModel: ModelSeq;
-  private classModel: ModelSeq;
-  private categoryModel: ModelSeq;
+  private scheduleModel: ModelSeq<ScheduleModel>;
+  private userScheduleModel: ModelSeq<UserScheduleModel>;
+  private userModel: ModelSeq<UserModel>;
+  private classModel: ModelSeq<ClassModel>;
+  private categoryModel: ModelSeq<CategoryModel>;
 
   constructor() {
     this.scheduleModel = db.Schedule;
     this.userScheduleModel = db.UserSchedule;
-    this.usersModel = db.Users;
+    this.userModel = db.Users;
     this.classModel = db.Class;
     this.categoryModel = db.Category;
   }
@@ -20,7 +20,8 @@ export class ScheduleController {
   async getSchedules(limit: number, offset: number = 0) {
     try {
       const now = new Date();
-      const schedules = await this.scheduleModel
+      // If id_user is provided, fetch only schedules for that not user
+      const schedules = (await this.scheduleModel
         .findAll({
           limit,
           offset,
@@ -33,7 +34,6 @@ export class ScheduleController {
               model: this.userScheduleModel,
               as: "userSchedules",
               attributes: ["id", "id_user", "id_schedule"],
-              // where: { status: true },
             },
             {
               model: this.classModel,
@@ -62,22 +62,22 @@ export class ScheduleController {
           return schedules.map((schedule) => ({
             ...schedule.toJSON(),
           }));
-        });
+        })) as IScheduleWithRelations[];
 
       const data = schedules.map(
         ({ class: Class, userSchedules, ...schedule }) => {
           return {
             id: schedule.id,
-            name: Class.name,
-            image: Class.photo,
+            name: Class!.name,
+            image: Class!.photo,
             time: schedule.startTime,
-            spots: userSchedules.length,
-            spotsAvailable: Class.capacity - userSchedules.length,
-            maxSpots: Class.capacity,
-            duration: Class.duration,
-            difficulty: Class.difficulty,
-            price: Class.price,
-            category: Class.category,
+            spots: userSchedules?.length || 0,
+            spotsAvailable: Class!.capacity - (userSchedules?.length || 0),
+            maxSpots: Class!.capacity,
+            duration: Class!.duration,
+            difficulty: Class!.difficulty,
+            price: Class!.price,
+            category: Class!.category,
           };
         }
       );
@@ -96,7 +96,7 @@ export class ScheduleController {
 
   async getMySchedule(id_user: number) {
     try {
-      const userSchedule = await this.userScheduleModel
+      const userSchedule = (await this.userScheduleModel
         .findAll({
           where: { id_user },
           include: [
@@ -116,32 +116,32 @@ export class ScheduleController {
             },
           ],
         })
-        .then((userSchedule) => userSchedule.map((us) => us.toJSON()));
+        .then((userSchedule) =>
+          userSchedule.map((us) => us.toJSON())
+        )) as IUserScheduleWithRelations[];
 
-      const data = userSchedule.map(
-        ({ id, schedule: { startTime, class: classData } }) => {
-          const dateStart = new Date(startTime);
-          const date = dateStart.toLocaleDateString("es-ES", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-          });
-          const time = dateStart.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          });
+      const data = userSchedule.map(({ id, schedule }) => {
+        const dateStart = new Date(schedule!.startTime);
+        const date = dateStart.toLocaleDateString("es-ES", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        });
+        const time = dateStart.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
 
-          return {
-            id,
-            className: classData.name,
-            image: classData.photo,
-            price: classData.price,
-            location: classData.location,
-            date,
-            time,
-          };
-        }
-      );
+        return {
+          id,
+          className: schedule!.class!.name,
+          image: schedule!.class!.photo,
+          price: schedule!.class!.price,
+          location: schedule!.class!.location,
+          date,
+          time,
+        };
+      });
 
       return {
         code: 200,

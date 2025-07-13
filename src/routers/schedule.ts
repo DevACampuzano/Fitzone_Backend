@@ -14,6 +14,7 @@ router.get("/", [validateJWT], async (req: Request, res: Response) => {
   try {
     const limit = parseInt(req.query.limit as string) || 5;
     const offset = parseInt(req.query.offset as string) || 0;
+
     if (isNaN(limit) || isNaN(offset)) {
       return res.status(400).json({
         status: false,

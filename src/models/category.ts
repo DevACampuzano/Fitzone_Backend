@@ -1,7 +1,7 @@
 import { DataTypes, type Sequelize } from "sequelize";
 import type { ModelSeq } from "../common/interface/db";
 export default (sequelize: Sequelize) => {
-  const Category: ModelSeq = sequelize.define<ClassModel>(
+  const Category: ModelSeq<CategoryModel> = sequelize.define<CategoryModel>(
     "Category",
     {
       id: {

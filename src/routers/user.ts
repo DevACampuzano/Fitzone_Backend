@@ -1,10 +1,13 @@
 import { Router, type Request, type Response } from "express";
 import { check } from "express-validator";
 import { UserController } from "../controllers";
+import { validateJWT } from "../common/middlewares";
 
 enum UserErrorCodes {
   Error_1 = "USER_001",
   Error_2 = "USER_002",
+  Error_3 = "USER_003",
+  Error_4 = "USER_004",
 }
 
 const userController = new UserController();
@@ -65,6 +68,33 @@ router.post(
         message: "Error logging in user",
         error: error instanceof Error ? error.message : "Unknown error",
         code: UserErrorCodes.Error_2,
+      });
+    }
+  }
+);
+
+router.get(
+  "/get-my-progress",
+  [validateJWT],
+  async (req: Request, res: Response) => {
+    try {
+      const userId = req["decoded"].id;
+      if (!userId) {
+        return res.status(401).json({
+          status: false,
+          message: "Unauthorized",
+          code: UserErrorCodes.Error_3,
+        });
+      }
+      const { code, response } = await userController.getMyProgress(userId);
+      res.status(code).json(response);
+    } catch (error) {
+      console.error("Error fetching user progress:", error);
+      res.status(500).json({
+        status: false,
+        message: "Error fetching user progress",
+        error: error instanceof Error ? error.message : "Unknown error",
+        code: UserErrorCodes.Error_4,
       });
     }
   }

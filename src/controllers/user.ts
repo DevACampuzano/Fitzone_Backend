@@ -3,17 +3,23 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import db from "../models";
 import { config } from "../config";
+import { Op } from "sequelize";
 
 export class UserController {
   private userModel: ModelSeq;
+  private scheduleModel: ModelSeq;
+  private userScheduleModel: ModelSeq;
 
   constructor() {
     this.userModel = db.Users;
+    this.scheduleModel = db.Schedule;
+    this.userScheduleModel = db.UserSchedule;
   }
 
   async getUserByEmail(email: string) {
-    return await this.userModel.findOne({ where: { email } });
+    return await this.userModel.findOne({ where: { email, status: true } });
   }
+
   async createUser(data: ICreationUser) {
     try {
       const existingUser = await this.getUserByEmail(data.email);
@@ -89,6 +95,74 @@ export class UserController {
     } catch (error) {
       console.error("Error logging in user:", error);
       throw new Error("Error logging in user");
+    }
+  }
+
+  async getMyProgress(userId: number) {
+    try {
+      console.log("Fetching user progress for userId:", userId);
+      const user = await this.userModel.findByPk(userId, {
+        attributes: ["id", "name", "lastName", "email", "phone"],
+      });
+
+      if (!user) {
+        return {
+          code: 404,
+          response: {
+            status: false,
+            message: "Usuario no encontrado",
+          },
+        };
+      }
+
+      const now = new Date();
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      const endOfMonth = new Date(
+        now.getFullYear(),
+        now.getMonth() + 1,
+        0,
+        23,
+        59,
+        59,
+        999
+      );
+
+      const userShedule = await this.userScheduleModel
+        .findAll({
+          where: { id_user: userId, status: true },
+          include: [
+            {
+              model: this.scheduleModel,
+              as: "schedule",
+              attributes: ["id", "startTime"],
+              where: {
+                status: true,
+                startTime: {
+                  [Op.between]: [startOfMonth, endOfMonth],
+                },
+              },
+            },
+          ],
+        })
+        .then((schedules) => schedules.map((schedule) => schedule.toJSON()));
+
+      const nextClasses = userShedule.filter(
+        (item) => new Date(item.schedule.startTime) > now
+      ).length;
+
+      return {
+        code: 200,
+        response: {
+          status: true,
+          data: {
+            totalClasses: userShedule.length - nextClasses,
+            nextClasses,
+          },
+        },
+      };
+    } catch (error) {
+      console.error("Error fetching user progress:", error);
+      throw new Error("Error fetching user progress");
     }
   }
 }

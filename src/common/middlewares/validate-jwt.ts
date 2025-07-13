@@ -1,6 +1,13 @@
 import type { Request, Response, NextFunction } from "express";
 import { type VerifyErrors, verify } from "jsonwebtoken";
 
+// Extend Express Request interface to include 'decoded'
+declare module "express-serve-static-core" {
+  interface Request {
+    decoded?: any;
+  }
+}
+
 export const validateJWT = async (
   req: Request,
   res: Response,
@@ -11,17 +18,17 @@ export const validateJWT = async (
   if (typeof token === "object" || token === "") {
     res.status(503).json({
       status: false,
-      message: "NOT-PROVIDED-TOKEN",
+      message: "INVALID-TOKEN",
     });
     return;
   }
 
   try {
-    req.body["decoded"] = await validateToken(token, req.app.get("key"));
+    req["decoded"] = await validateToken(token, req.app.get("key"));
     next();
   } catch (error) {
     console.error("Error al validar token", error);
-    res.status(503).json({ status: false, message: "INVALID_TOKEN" });
+    res.status(503).json({ status: false, message: "INVALID-TOKEN" });
     return;
   }
 };

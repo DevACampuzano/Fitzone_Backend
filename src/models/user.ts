@@ -42,5 +42,16 @@ export default (sequelize: Sequelize) => {
     }
   );
 
+  Users.associate = (models) => {
+    Users.hasMany(models.UserSchedule, {
+      foreignKey: "id_user",
+      as: "userSchedules",
+    });
+    // Users.hasMany(models.Payment, {
+    //   foreignKey: "id_user",
+    //   as: "payments",
+    // });
+  };
+
   return Users;
 };

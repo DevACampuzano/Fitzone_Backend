@@ -28,10 +28,7 @@ const sequelize = new Sequelize({
 fs.readdirSync(__dirname)
   .filter(
     (file) =>
-      file !== "Server.ts" &&
-      file.indexOf(".") !== 0 &&
-      file !== basename &&
-      file.slice(-3) === ".ts"
+      file.indexOf(".") !== 0 && file !== basename && file.slice(-3) === ".ts"
   )
   .forEach((file) => {
     const model = require(path.join(__dirname, file)).default(sequelize);
@@ -51,6 +48,10 @@ export type DbModels = {
   sequelize: Sequelize;
   Sequelize: Sequelize;
   Users: ModelSeq;
+  Class: ModelSeq;
+  Category: ModelSeq;
+  Schedule: ModelSeq;
+  UserSchedule: ModelSeq;
 };
 
 export default db as DbModels;

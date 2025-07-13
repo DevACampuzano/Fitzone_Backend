@@ -56,7 +56,7 @@ export class Server {
 
   private async dbConnection() {
     try {
-      await db.sequelize.sync();
+      await db.sequelize.sync({ alter: true });
       console.log("Database online");
     } catch (error) {
       throw error;

@@ -6,12 +6,14 @@ export class ScheduleController {
   private userScheduleModel: ModelSeq;
   private usersModel: ModelSeq;
   private classModel: ModelSeq;
+  private categoryModel: ModelSeq;
 
   constructor() {
     this.scheduleModel = db.Schedule;
     this.userScheduleModel = db.UserSchedule;
     this.usersModel = db.Users;
     this.classModel = db.Class;
+    this.categoryModel = db.Category;
   }
 
   async getSchedules(limit: number, offset: number = 0) {
@@ -31,8 +33,23 @@ export class ScheduleController {
             {
               model: this.classModel,
               as: "class",
-              attributes: ["name", "photo", "capacity"],
+              attributes: [
+                "name",
+                "photo",
+                "capacity",
+                "difficulty",
+                "price",
+                "duration",
+              ],
               where: { status: true },
+              include: [
+                {
+                  model: this.categoryModel,
+                  as: "category",
+                  attributes: ["id", "name"],
+                  where: { status: true },
+                },
+              ],
             },
           ],
         })
@@ -52,6 +69,11 @@ export class ScheduleController {
             image: Class.photo,
             time: schedule.startTime,
             spots,
+            maxSpots: Class.capacity,
+            duration: Class.duration,
+            difficulty: Class.difficulty,
+            price: Class.price,
+            category: Class.category,
           };
         }
       );

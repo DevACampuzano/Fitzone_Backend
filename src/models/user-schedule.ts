@@ -19,10 +19,6 @@ export default (sequelize: Sequelize) => {
           type: DataTypes.BIGINT,
           allowNull: false,
         },
-        id_payment: {
-          type: DataTypes.BIGINT,
-          allowNull: true,
-        },
         status: {
           type: DataTypes.TINYINT,
           defaultValue: 1,

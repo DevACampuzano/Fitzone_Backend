@@ -232,7 +232,7 @@ export class ScheduleController {
         }),
         duration: schedule.class!.duration,
         difficulty: schedule.class!.difficulty,
-        spots,
+        spots: schedule.class!.capacity - spots,
         maxSpots: schedule.class!.capacity,
         price: schedule.class!.price,
         image: schedule.class!.photo,

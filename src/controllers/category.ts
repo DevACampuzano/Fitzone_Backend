@@ -2,7 +2,7 @@ import type { ModelSeq } from "../common/interface/db";
 import db from "../models";
 
 export class CategoryController {
-  private categoryModel: ModelSeq;
+  private categoryModel: ModelSeq<CategoryModel>;
 
   constructor() {
     this.categoryModel = db.Category;

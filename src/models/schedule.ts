@@ -1,7 +1,7 @@
 import { DataTypes, type Sequelize } from "sequelize";
 import type { ModelSeq } from "../common/interface/db";
 export default (sequelize: Sequelize) => {
-  const Schedule: ModelSeq = sequelize.define<ScheduleModel>(
+  const Schedule: ModelSeq<ScheduleModel> = sequelize.define<ScheduleModel>(
     "Schedule",
     {
       id: {

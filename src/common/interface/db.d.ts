@@ -4,6 +4,6 @@ interface IGeneralObj {
   [key: string]: ModelSeq | Sequelize;
 }
 
-interface ModelSeq extends ModelCtor<Model<any, any>> {
+interface ModelSeq<T> extends ModelCtor<T> {
   associate?: (db: DbModels) => void;
 }

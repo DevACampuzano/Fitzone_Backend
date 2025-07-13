@@ -6,5 +6,11 @@ interface IUserSchedule {
   status: number;
 }
 
+interface IUserScheduleWithRelations extends IUserSchedule {
+  schedule?: ISchedule & {
+    class?: IClass;
+  };
+}
+
 type ICreationUserSchedule = Optional<IUserSchedule, "id" | "status">;
 type UserScheduleModel = Model<IUserSchedule, ICreationUserSchedule>;

@@ -1,7 +1,8 @@
 import { DataTypes, type Sequelize } from "sequelize";
 import type { ModelSeq } from "../common/interface/db";
+
 export default (sequelize: Sequelize) => {
-  const Class: ModelSeq = sequelize.define<ClassModel>(
+  const Class: ModelSeq<ClassModel> = sequelize.define<ClassModel>(
     "Class",
     {
       id: {
@@ -12,6 +13,10 @@ export default (sequelize: Sequelize) => {
       },
       name: {
         type: DataTypes.STRING(500),
+        allowNull: false,
+      },
+      description: {
+        type: DataTypes.TEXT,
         allowNull: false,
       },
       duration: {
@@ -28,15 +33,34 @@ export default (sequelize: Sequelize) => {
       },
       difficulty: {
         type: DataTypes.ENUM("Principiante", "Intermedio", "Avanzado"),
-        allowNull: true,
-      },
-      id_category: {
-        type: DataTypes.BIGINT,
         allowNull: false,
       },
       photo: {
         type: DataTypes.STRING(500),
-        allowNull: true,
+        allowNull: false,
+      },
+      location: {
+        type: DataTypes.STRING(500),
+        allowNull: false,
+      },
+      equipment: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+        defaultValue: "[]",
+      },
+      benefits: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+        defaultValue: "[]",
+      },
+      requirements: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+        defaultValue: "[]",
+      },
+      id_category: {
+        type: DataTypes.BIGINT,
+        allowNull: false,
       },
       status: {
         type: DataTypes.TINYINT,

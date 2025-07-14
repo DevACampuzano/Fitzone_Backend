@@ -1,7 +1,7 @@
 import { Router, type Request, type Response } from "express";
 import { check } from "express-validator";
 import { UserController } from "../controllers";
-import { validateJWT } from "../common/middlewares";
+import { validateFields, validateJWT } from "../common/middlewares";
 
 enum UserErrorCodes {
   Error_1 = "USER_001",
@@ -24,6 +24,7 @@ router.post(
     check("password")
       .isLength({ min: 8 })
       .withMessage("La contraseña debe tener al menos 8 caracteres"),
+    validateFields,
   ],
   async (req: Request, res: Response) => {
     try {
@@ -55,6 +56,7 @@ router.post(
       .isEmail()
       .withMessage("Se requiere un correo electrónico válido"),
     check("password").notEmpty().withMessage("La contraseña es requerida"),
+    validateFields,
   ],
   async (req: Request, res: Response) => {
     try {

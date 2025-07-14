@@ -36,7 +36,7 @@ fs.readdirSync(__dirname)
   });
 
 Object.keys(db).forEach((modelName) => {
-  const model = db[modelName] as ModelSeq;
+  const model = db[modelName] as ModelSeq<any>;
   if (model.associate) {
     model.associate(db as DbModels);
   }
@@ -47,11 +47,12 @@ db["sequelize"] = sequelize;
 export type DbModels = {
   sequelize: Sequelize;
   Sequelize: Sequelize;
-  Users: ModelSeq;
-  Class: ModelSeq;
-  Category: ModelSeq;
-  Schedule: ModelSeq;
-  UserSchedule: ModelSeq;
+  Users: ModelSeq<UserModel>;
+  Class: ModelSeq<ClassModel>;
+  Category: ModelSeq<CategoryModel>;
+  Schedule: ModelSeq<ScheduleModel>;
+  UserSchedule: ModelSeq<UserScheduleModel>;
+  Payment: ModelSeq<PaymentModel>;
 };
 
 export default db as DbModels;

@@ -1,7 +1,7 @@
 import { DataTypes, type Sequelize } from "sequelize";
 import type { ModelSeq } from "../common/interface/db";
 export default (sequelize: Sequelize) => {
-  const Users: ModelSeq = sequelize.define<UserModel>(
+  const Users: ModelSeq<UserModel> = sequelize.define<UserModel>(
     "Users",
     {
       id: {
@@ -29,6 +29,10 @@ export default (sequelize: Sequelize) => {
       password: {
         type: DataTypes.STRING(500),
         allowNull: false,
+      },
+      token_FCM: {
+        type: DataTypes.STRING(500),
+        allowNull: true,
       },
       status: {
         type: DataTypes.TINYINT,

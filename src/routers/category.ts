@@ -21,7 +21,7 @@ router.get("/", [validateJWT], async (req: Request, res: Response) => {
       status: false,
       message: "Error fetching categories",
       error: error instanceof Error ? error.message : "Unknown error",
-      code: CategoryErrorCodes.Error_2,
+      code: CategoryErrorCodes.Error_1,
     });
   }
 });

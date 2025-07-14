@@ -1,38 +1,35 @@
 import { DataTypes, type Sequelize } from "sequelize";
 import type { ModelSeq } from "../common/interface/db";
 export default (sequelize: Sequelize) => {
-  const UserSchedule: ModelSeq = sequelize.define<UserScheduleModel>(
-    "UserSchedule",
-    {
-      id: {
-        type: DataTypes.BIGINT,
-        autoIncrement: true,
-        allowNull: false,
-        primaryKey: true,
+  const UserSchedule: ModelSeq<UserScheduleModel> =
+    sequelize.define<UserScheduleModel>(
+      "UserSchedule",
+      {
+        id: {
+          type: DataTypes.BIGINT,
+          autoIncrement: true,
+          allowNull: false,
+          primaryKey: true,
+        },
+        id_user: {
+          type: DataTypes.BIGINT,
+          allowNull: false,
+        },
+        id_schedule: {
+          type: DataTypes.BIGINT,
+          allowNull: false,
+        },
+        status: {
+          type: DataTypes.TINYINT,
+          defaultValue: 1,
+          allowNull: false,
+        },
       },
-      id_user: {
-        type: DataTypes.BIGINT,
-        allowNull: false,
-      },
-      id_schedule: {
-        type: DataTypes.BIGINT,
-        allowNull: false,
-      },
-      id_payment: {
-        type: DataTypes.BIGINT,
-        allowNull: true,
-      },
-      status: {
-        type: DataTypes.TINYINT,
-        defaultValue: 1,
-        allowNull: false,
-      },
-    },
-    {
-      tableName: "user_schedule",
-      timestamps: false,
-    }
-  );
+      {
+        tableName: "user_schedule",
+        timestamps: false,
+      }
+    );
 
   UserSchedule.associate = (models) => {
     UserSchedule.belongsTo(models.Schedule, {
@@ -43,10 +40,10 @@ export default (sequelize: Sequelize) => {
       foreignKey: "id_user",
       as: "user",
     });
-    // UserSchedule.belongsTo(models.Payment, {
-    //   foreignKey: "id_payment",
-    //   as: "payment",
-    // });
+    UserSchedule.hasOne(models.Payment, {
+      foreignKey: "id_user_schedule",
+      as: "payment",
+    });
   };
 
   return UserSchedule;

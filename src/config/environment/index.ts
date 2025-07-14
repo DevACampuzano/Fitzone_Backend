@@ -26,6 +26,16 @@ const envSchema = joi
       .required(),
     NODEMAILER_USER: joi.string().required(),
     NODEMAILER_PASSWORD: joi.string().required(),
+    FIREBASE_PROYECT_ID: joi.string().required(),
+    FIREBASE_PRIVATE_KEY_ID: joi.string().required(),
+    FIREBASE_PRIVATE_KEY: joi.string().required(),
+    FIREBASE_CLIENT_ID: joi.string().required(),
+    FIREBASE_CLIENT_EMAIL: joi.string().required(),
+    FIREBASE_AUTH_URI: joi.string().required(),
+    FIREBASE_TOKEN_URI: joi.string().required(),
+    FIREBASE_AUTH_PROVIDER_X509_CERT_URL: joi.string().required(),
+    FIREBASE_CLIENT_X509_CERT_URL: joi.string().required(),
+    FIREBASE_UNIVERSE_DOMAIN: joi.string().required(),
   })
   .unknown(true);
 
@@ -59,5 +69,17 @@ export const config = {
       user: env.NODEMAILER_USER,
       pass: env.NODEMAILER_PASSWORD,
     },
+  },
+  firebase: {
+    project_id: env.FIREBASE_PROYECT_ID,
+    private_key_id: env.FIREBASE_PRIVATE_KEY_ID,
+    private_key: env.FIREBASE_PRIVATE_KEY,
+    client_id: env.FIREBASE_CLIENT_ID,
+    client_email: env.FIREBASE_CLIENT_EMAIL,
+    auth_uri: env.FIREBASE_AUTH_URI,
+    token_uri: env.FIREBASE_TOKEN_URI,
+    auth_provider_x509_cert_url: env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
+    client_x509_cert_url: env.FIREBASE_CLIENT_X509_CERT_URL,
+    universe_domain: env.FIREBASE_UNIVERSE_DOMAIN,
   },
 };

@@ -1,8 +1,8 @@
 import { DataTypes, type Sequelize } from "sequelize";
 import type { ModelSeq } from "../common/interface/db";
 export default (sequelize: Sequelize) => {
-  const Schedule: ModelSeq<ScheduleModel> = sequelize.define<ScheduleModel>(
-    "Schedule",
+  const Payment: ModelSeq<PaymentModel> = sequelize.define<PaymentModel>(
+    "Payment",
     {
       id: {
         type: DataTypes.BIGINT,
@@ -10,12 +10,17 @@ export default (sequelize: Sequelize) => {
         allowNull: false,
         primaryKey: true,
       },
-      id_class: {
+      id_user_schedule: {
         type: DataTypes.BIGINT,
         allowNull: false,
       },
-      startTime: {
+      value: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+      },
+      date: {
         type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
         allowNull: false,
       },
       status: {
@@ -25,21 +30,17 @@ export default (sequelize: Sequelize) => {
       },
     },
     {
-      tableName: "schedule",
+      tableName: "payment",
       timestamps: false,
     }
   );
 
-  Schedule.associate = (models) => {
-    Schedule.belongsTo(models.Class, {
-      foreignKey: "id_class",
-      as: "class",
-    });
-    Schedule.hasMany(models.UserSchedule, {
-      foreignKey: "id_schedule",
-      as: "userSchedules",
+  Payment.associate = (models) => {
+    Payment.belongsTo(models.UserSchedule, {
+      foreignKey: "id_user_schedule",
+      as: "userSchedule",
     });
   };
 
-  return Schedule;
+  return Payment;
 };

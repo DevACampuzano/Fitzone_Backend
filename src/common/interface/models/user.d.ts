@@ -3,8 +3,9 @@ interface IUser {
   name: string;
   lastName: string;
   email: string;
-  phone?: string;
+  phone?: string | null;
   password: string;
+  token_FCM?: string | null;
   status: number;
 }
 

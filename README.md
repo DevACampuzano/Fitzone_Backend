@@ -267,3 +267,12 @@ Cada módulo tiene códigos de error específicos:
 - `USER_001`, `USER_002`, etc.
 - `CATEGORY_001`, `CATEGORY_002`, etc.
 - `SCHEDULE_001`, `SCHEDULE_002`, etc.
+
+## 🗺️ Roadmap
+
+### Próximas Funcionalidades (v1.1)
+
+- 🔄 Integración con pasarelas de pago
+- 🔄 Dashboard administrativo
+- 🔄 Reportes y analytics
+- 🔄 Sistema de membresías

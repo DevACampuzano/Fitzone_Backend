@@ -8,6 +8,7 @@ export class ScheduleController {
   private userModel: ModelSeq<UserModel>;
   private classModel: ModelSeq<ClassModel>;
   private categoryModel: ModelSeq<CategoryModel>;
+  private paymentModel: ModelSeq<PaymentModel>;
 
   constructor() {
     this.scheduleModel = db.Schedule;
@@ -15,6 +16,7 @@ export class ScheduleController {
     this.userModel = db.Users;
     this.classModel = db.Class;
     this.categoryModel = db.Category;
+    this.paymentModel = db.Payment;
   }
 
   async getSchedules(limit: number, offset: number = 0) {
@@ -252,6 +254,114 @@ export class ScheduleController {
     } catch (error) {
       console.error("Error fetching schedule:", error);
       throw new Error("Error fetching schedule");
+    }
+  }
+
+  async createPayment(id_user: number, id_schedule: number) {
+    const transaction = await db.sequelize.transaction();
+    try {
+      const isUser = await this.userModel.findOne({
+        where: {
+          id: id_user,
+          status: true,
+        },
+        transaction,
+      });
+      if (!isUser) {
+        return {
+          code: 404,
+          response: {
+            status: false,
+            message: "Usuario no encontrado",
+          },
+        };
+      }
+      const scheduleInstance = await this.scheduleModel.findOne({
+        where: {
+          id: id_schedule,
+          status: true,
+        },
+        include: [
+          {
+            model: this.classModel,
+            as: "class",
+            attributes: ["id", "price"],
+          },
+        ],
+        transaction,
+      });
+      const schedule: IScheduleWithRelations | null = scheduleInstance
+        ? (scheduleInstance.toJSON() as IScheduleWithRelations)
+        : null;
+      if (!schedule) {
+        return {
+          code: 404,
+          response: {
+            status: false,
+            message: "Clase no encontrada",
+          },
+        };
+      }
+
+      const isUserSchedule = await this.userScheduleModel.findOne({
+        where: {
+          id_user,
+          id_schedule,
+        },
+        transaction,
+      });
+      if (isUserSchedule) {
+        return {
+          code: 400,
+          response: {
+            status: false,
+            message: "Usted ya ha reservado esta clase",
+          },
+        };
+      }
+
+      const userSchedule = await this.userScheduleModel
+        .create(
+          {
+            id_user,
+            id_schedule,
+          },
+          {
+            transaction,
+          }
+        )
+        .then((us) => us.toJSON());
+
+      const payment = await this.paymentModel
+        .create(
+          {
+            id_user_schedule: userSchedule.id,
+            value: schedule.class!.price,
+            date: new Date(),
+          },
+          {
+            transaction,
+          }
+        )
+        .then((payment) => payment.toJSON());
+
+      await transaction.commit();
+      return {
+        code: 201,
+        response: {
+          status: true,
+          data: {
+            id: payment.id,
+            value: payment.value,
+            date: payment.date,
+            userScheduleId: payment.id_user_schedule,
+          },
+        },
+      };
+    } catch (error) {
+      await transaction.rollback();
+      console.error("Error creating payment:", error);
+      throw new Error("Error creating payment");
     }
   }
 }

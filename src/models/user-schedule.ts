@@ -40,10 +40,10 @@ export default (sequelize: Sequelize) => {
       foreignKey: "id_user",
       as: "user",
     });
-    // UserSchedule.belongsTo(models.Payment, {
-    //   foreignKey: "id_payment",
-    //   as: "payment",
-    // });
+    UserSchedule.hasOne(models.Payment, {
+      foreignKey: "id_user_schedule",
+      as: "payment",
+    });
   };
 
   return UserSchedule;

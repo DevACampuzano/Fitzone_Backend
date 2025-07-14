@@ -2,7 +2,7 @@ import { DataTypes, type Sequelize } from "sequelize";
 import type { ModelSeq } from "../common/interface/db";
 
 export default (sequelize: Sequelize) => {
-  const Class: ModelSeq = sequelize.define<ClassModel>(
+  const Class: ModelSeq<ClassModel> = sequelize.define<ClassModel>(
     "Class",
     {
       id: {

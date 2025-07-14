@@ -11,6 +11,7 @@ enum ScheduleErrorCodes {
   Error_4 = "SCHEDULE_004",
   Error_5 = "SCHEDULE_005",
   Error_6 = "SCHEDULE_006",
+  Error_7 = "SCHEDULE_007",
 }
 const scheduleController = new ScheduleController();
 const router = Router();
@@ -130,6 +131,38 @@ router.get(
         message: "Error fetching schedule",
         error: error instanceof Error ? error.message : "Unknown error",
         code: ScheduleErrorCodes.Error_6,
+      });
+    }
+  }
+);
+
+router.post(
+  "/pay-reservation",
+  [
+    validateJWT,
+    check("id_schedule")
+      .notEmpty()
+      .isNumeric()
+      .withMessage("El id_schedule es requerido y debe ser un número"),
+    validateFields,
+  ],
+  async (req: Request, res: Response) => {
+    try {
+      const userId = req["decoded"].id;
+      const { id_schedule } = req.body;
+
+      const { code, response } = await scheduleController.createPayment(
+        userId,
+        id_schedule
+      );
+      res.status(code).json(response);
+    } catch (error) {
+      console.error("Error processing payment:", error);
+      res.status(500).json({
+        status: false,
+        message: "Error processing payment",
+        error: error instanceof Error ? error.message : "Unknown error",
+        code: ScheduleErrorCodes.Error_7,
       });
     }
   }

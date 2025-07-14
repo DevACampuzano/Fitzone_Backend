@@ -10,6 +10,7 @@ interface IUserScheduleWithRelations extends IUserSchedule {
   schedule?: ISchedule & {
     class?: IClass;
   };
+  payment?: IPayment;
 }
 
 type ICreationUserSchedule = Optional<IUserSchedule, "id" | "status">;

@@ -19,10 +19,6 @@ export default (sequelize: Sequelize) => {
           type: DataTypes.BIGINT,
           allowNull: false,
         },
-        id_payment: {
-          type: DataTypes.BIGINT,
-          allowNull: true,
-        },
         status: {
           type: DataTypes.TINYINT,
           defaultValue: 1,
@@ -44,10 +40,10 @@ export default (sequelize: Sequelize) => {
       foreignKey: "id_user",
       as: "user",
     });
-    // UserSchedule.belongsTo(models.Payment, {
-    //   foreignKey: "id_payment",
-    //   as: "payment",
-    // });
+    UserSchedule.hasOne(models.Payment, {
+      foreignKey: "id_user_schedule",
+      as: "payment",
+    });
   };
 
   return UserSchedule;

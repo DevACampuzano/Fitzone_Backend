@@ -52,6 +52,7 @@ export type DbModels = {
   Category: ModelSeq<CategoryModel>;
   Schedule: ModelSeq<ScheduleModel>;
   UserSchedule: ModelSeq<UserScheduleModel>;
+  Payment: ModelSeq<PaymentModel>;
 };
 
 export default db as DbModels;

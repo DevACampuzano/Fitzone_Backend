@@ -6,9 +6,9 @@ import { config } from "../config";
 import { Op } from "sequelize";
 
 export class UserController {
-  private userModel: ModelSeq;
-  private scheduleModel: ModelSeq;
-  private userScheduleModel: ModelSeq;
+  private userModel: ModelSeq<UserModel>;
+  private scheduleModel: ModelSeq<ScheduleModel>;
+  private userScheduleModel: ModelSeq<UserScheduleModel>;
 
   constructor() {
     this.userModel = db.Users;
@@ -51,8 +51,8 @@ export class UserController {
 
   async login(email: string, password: string) {
     try {
-      const user = await this.getUserByEmail(email);
-      if (!user) {
+      const isUser = await this.getUserByEmail(email);
+      if (!isUser) {
         return {
           code: 404,
           response: {
@@ -61,6 +61,7 @@ export class UserController {
           },
         };
       }
+      const user = isUser.toJSON();
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
         return {
@@ -144,10 +145,15 @@ export class UserController {
             },
           ],
         })
-        .then((schedules) => schedules.map((schedule) => schedule.toJSON()));
+        .then(
+          (schedules) =>
+            schedules.map((schedule) =>
+              schedule.toJSON()
+            ) as IUserScheduleWithRelations[]
+        );
 
       const nextClasses = userShedule.filter(
-        (item) => new Date(item.schedule.startTime) > now
+        ({ schedule }) => new Date(schedule!.startTime) > now
       ).length;
 
       return {

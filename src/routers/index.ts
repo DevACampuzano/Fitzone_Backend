@@ -11,4 +11,8 @@ export const ApiPaths: IPaths[] = [
     url: "schedules",
     router: "schedule",
   },
+  {
+    url: "notifications",
+    router: "notification",
+  },
 ];

@@ -30,6 +30,10 @@ export default (sequelize: Sequelize) => {
         type: DataTypes.STRING(500),
         allowNull: false,
       },
+      token_FCM: {
+        type: DataTypes.STRING(500),
+        allowNull: true,
+      },
       status: {
         type: DataTypes.TINYINT,
         defaultValue: 1,
